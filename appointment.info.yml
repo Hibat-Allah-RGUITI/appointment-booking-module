@@ -1,0 +1,9 @@
+name: 'Appointment'
+type: module
+description: 'Module for appointment booking system'
+package: Custom
+core_version_requirement: ^10 || ^11
+dependencies:
+  - drupal:field
+  - drupal:user
+  - drupal:options

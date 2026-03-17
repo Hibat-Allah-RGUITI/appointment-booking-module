@@ -1,0 +1,11 @@
+appointment.add_form:
+  title: 'Add appointment'
+  route_name: entity.appointment.add_form
+  appears_on:
+    - entity.appointment.collection
+
+agency.add_form:
+  title: 'Add agency'
+  route_name: entity.agency.add_form
+  appears_on:
+    - entity.agency.collection

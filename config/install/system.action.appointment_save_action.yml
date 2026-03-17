@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - appointment
+id: appointment_save_action
+label: 'Save appointments'
+type: appointment
+plugin: entity:save_action:appointment
+configuration: {  }

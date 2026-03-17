@@ -1,0 +1,23 @@
+entity.appointment.settings:
+  title: 'Appointment'
+  description: 'Configure an Appointment entity type.'
+  route_name:  entity.appointment.settings
+  parent: system.admin_structure
+
+entity.appointment.collection:
+  title: 'Appointments'
+  description: 'List of appointments.'
+  route_name: entity.appointment.collection
+  parent: system.admin_content
+
+entity.agency.settings:
+  title: 'Agency'
+  description: 'Configure an Agency entity type.'
+  route_name:  entity.agency.settings
+  parent: system.admin_structure
+
+entity.agency.collection:
+  title: 'Agencies'
+  description: 'List of agencies.'
+  route_name: entity.agency.collection
+  parent: system.admin_content

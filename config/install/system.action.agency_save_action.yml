@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - appointment
+id: agency_save_action
+label: 'Save agencies'
+type: agency
+plugin: entity:save_action:agency
+configuration: {  }

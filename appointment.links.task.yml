@@ -1,0 +1,45 @@
+entity.appointment.settings:
+  title: 'Settings'
+  route_name: entity.appointment.settings
+  base_route: entity.appointment.settings
+entity.appointment.view:
+  title: 'View'
+  route_name: entity.appointment.canonical
+  base_route: entity.appointment.canonical
+entity.appointment.edit_form:
+  title: 'Edit'
+  route_name: entity.appointment.edit_form
+  base_route: entity.appointment.canonical
+entity.appointment.delete_form:
+  title: 'Delete'
+  route_name: entity.appointment.delete_form
+  base_route: entity.appointment.canonical
+  weight: 10
+entity.appointment.collection:
+  title: 'Appointments'
+  route_name: entity.appointment.collection
+  base_route: system.admin_content
+  weight: 10
+
+entity.agency.settings:
+  title: 'Settings'
+  route_name: entity.agency.settings
+  base_route: entity.agency.settings
+entity.agency.view:
+  title: 'View'
+  route_name: entity.agency.canonical
+  base_route: entity.agency.canonical
+entity.agency.edit_form:
+  title: 'Edit'
+  route_name: entity.agency.edit_form
+  base_route: entity.agency.canonical
+entity.agency.delete_form:
+  title: 'Delete'
+  route_name: entity.agency.delete_form
+  base_route: entity.agency.canonical
+  weight: 10
+entity.agency.collection:
+  title: 'Agencies'
+  route_name: entity.agency.collection
+  base_route: system.admin_content
+  weight: 10
