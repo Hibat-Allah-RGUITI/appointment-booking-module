@@ -1,0 +1,18 @@
+uuid: a94144b6-bd63-46a0-b365-ffff548d302d
+langcode: en
+status: true
+dependencies:
+  module:
+    - appointment
+id: appointment.field_customer_email
+field_name: field_customer_email
+entity_type: appointment
+type: email
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

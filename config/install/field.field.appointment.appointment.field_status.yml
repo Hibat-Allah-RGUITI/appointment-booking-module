@@ -1,0 +1,21 @@
+uuid: 8409bd78-be5a-4a5d-aad1-6111be30751c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.appointment.field_status
+  module:
+    - appointment
+    - options
+id: appointment.appointment.field_status
+field_name: field_status
+entity_type: appointment
+bundle: appointment
+label: Status
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

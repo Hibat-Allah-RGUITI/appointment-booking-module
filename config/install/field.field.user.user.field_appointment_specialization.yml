@@ -1,0 +1,30 @@
+uuid: 9f4e27e8-26c0-4713-ac03-8aa934443d0e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_appointment_specialization
+    - taxonomy.vocabulary.appointment_type
+  module:
+    - user
+id: user.user.field_appointment_specialization
+field_name: field_appointment_specialization
+entity_type: user
+bundle: user
+label: Appointment_specializations
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      appointment_type: appointment_type
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

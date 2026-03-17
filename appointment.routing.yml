@@ -13,3 +13,11 @@ entity.agency.settings:
     _title: 'Agency'
   requirements:
     _permission: 'administer agency'
+
+appointment.book_form:
+  path: '/book-appointment'
+  defaults:
+    _form: '\Drupal\appointment\Form\AppointmentBookingForm'
+    _title: 'Book an appointment'
+  requirements:
+    _permission: 'access content'

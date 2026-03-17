@@ -1,0 +1,20 @@
+uuid: ce4ec6a1-7c2a-4e0b-ba7d-d7bc442205f4
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.agency.field_agency_email
+  module:
+    - appointment
+id: agency.agency.field_agency_email
+field_name: field_agency_email
+entity_type: agency
+bundle: agency
+label: Email
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: email

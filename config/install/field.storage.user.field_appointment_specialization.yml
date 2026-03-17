@@ -1,0 +1,20 @@
+uuid: e5ccebbb-72e3-4ad7-88f2-069afe526b21
+langcode: en
+status: true
+dependencies:
+  module:
+    - taxonomy
+    - user
+id: user.field_appointment_specialization
+field_name: field_appointment_specialization
+entity_type: user
+type: entity_reference
+settings:
+  target_type: taxonomy_term
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

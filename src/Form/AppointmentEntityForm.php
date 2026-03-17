@@ -18,9 +18,13 @@ final class AppointmentEntityForm extends ContentEntityForm {
   public function save(array $form, FormStateInterface $form_state): int {
     $result = parent::save($form, $form_state);
 
-    $message_args = ['%label' => $this->entity->toLink()->toString()];
+    $label = $this->entity->label();
+    if ($label === NULL || $label === '') {
+      $label = $this->t('(no label)');
+    }
+    $message_args = ['%label' => $this->entity->toLink($label)->toString()];
     $logger_args = [
-      '%label' => $this->entity->label(),
+      '%label' => $label,
       'link' => $this->entity->toLink($this->t('View'))->toString(),
     ];
 

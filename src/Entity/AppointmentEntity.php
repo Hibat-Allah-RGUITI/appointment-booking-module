@@ -95,6 +95,21 @@ class AppointmentEntity extends EditorialContentEntityBase implements Appointmen
   /**
    * {@inheritdoc}
    */
+  public function label() {
+    $label = parent::label();
+    if ($label === NULL || $label === '') {
+      $id = $this->id();
+      if ($id !== NULL && $id !== '') {
+        return (string) new TranslatableMarkup('Appointment @id', ['@id' => $id]);
+      }
+      return (string) new TranslatableMarkup('(no label)');
+    }
+    return $label;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function preSave(EntityStorageInterface $storage): void {
     parent::preSave($storage);
     if (!$this->getOwnerId()) {

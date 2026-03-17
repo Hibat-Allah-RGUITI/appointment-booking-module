@@ -1,0 +1,19 @@
+uuid: f32499bd-a1aa-4e04-b7e4-8b9ddc77e10f
+langcode: en
+status: true
+dependencies:
+  module:
+    - appointment
+id: appointment.field_notes
+field_name: field_notes
+entity_type: appointment
+type: string_long
+settings:
+  case_sensitive: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
