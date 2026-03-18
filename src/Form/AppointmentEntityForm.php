@@ -140,6 +140,13 @@ final class AppointmentEntityForm extends ContentEntityForm
         $this->validateWithinAdviserHours($form_state, $adviser_id, $date, 'field_appointment_date');
         $this->validateNoDoubleBooking($form_state, $agency_id, $adviser_id, $date, 'field_appointment_date', $entity->id() ? (int) $entity->id() : NULL);
       }
+
+      // Update the entity with the normalized date (UTC and rounded to minute).
+      if (!$form_state->hasAnyErrors()) {
+        $storage_date = clone $date;
+        $storage_date->setTimezone(new \DateTimeZone('UTC'));
+        $entity->set('field_appointment_date', $storage_date->format('Y-m-d\\TH:i:s'));
+      }
     }
   }
 

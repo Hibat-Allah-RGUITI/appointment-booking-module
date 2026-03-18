@@ -16,7 +16,8 @@ use Drupal\appointment\Traits\AppointmentValidationTrait;
 /**
  * Multi-step booking form for appointments.
  */
-class AppointmentBookingForm extends FormBase {
+class AppointmentBookingForm extends FormBase
+{
 
   use AppointmentValidationTrait;
 
@@ -24,21 +25,25 @@ class AppointmentBookingForm extends FormBase {
 
   private const DATE_ERROR_NAME = 'appointment_date';
 
-  public function __construct(PrivateTempStoreFactory $temp_store_factory) {
+  public function __construct(PrivateTempStoreFactory $temp_store_factory)
+  {
     $this->tempStore = $temp_store_factory->get('appointment_booking');
   }
 
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container)
+  {
     return new static(
       $container->get('tempstore.private')
     );
   }
 
-  public function getFormId() {
+  public function getFormId()
+  {
     return 'appointment_booking_form';
   }
 
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state)
+  {
 
     $step = $form_state->get('step') ?? 1;
 
@@ -133,7 +138,8 @@ class AppointmentBookingForm extends FormBase {
     return $form;
   }
 
-  public function validateForm(array &$form, FormStateInterface $form_state): void {
+  public function validateForm(array &$form, FormStateInterface $form_state): void
+  {
     $step = (int) ($form_state->get('step') ?? 1);
 
     if ($step === 3) {
@@ -165,14 +171,16 @@ class AppointmentBookingForm extends FormBase {
     }
   }
 
-  public function submitPrevious(array &$form, FormStateInterface $form_state): void {
+  public function submitPrevious(array &$form, FormStateInterface $form_state): void
+  {
     $step = $form_state->get('step') ?? 1;
     $this->tempStore->set('step_' . $step, $form_state->getValues());
     $form_state->set('step', max(1, $step - 1));
     $form_state->setRebuild();
   }
 
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state)
+  {
 
     $step = $form_state->get('step') ?? 1;
 
@@ -213,14 +221,21 @@ class AppointmentBookingForm extends FormBase {
     $agency_id = (string) ($this->tempStore->get('selected_agency') ?? ($data['agency'] ?? ''));
     $adviser_id = (string) ($this->tempStore->get('selected_adviser') ?? ($data['adviser'] ?? ''));
 
-    if (!$this->validateDateNotInPast($form_state, $date, self::DATE_ERROR_NAME) ||
-        !$this->validateWithinAgencyHours($form_state, $agency_id, $date, self::DATE_ERROR_NAME) ||
-        !$this->validateWithinAdviserHours($form_state, $adviser_id, $date, self::DATE_ERROR_NAME) ||
-        ($adviser_id !== '' && !$this->validateNoDoubleBooking($form_state, $agency_id, $adviser_id, $date, self::DATE_ERROR_NAME))) {
+    if (
+      !$this->validateDateNotInPast($form_state, $date, self::DATE_ERROR_NAME) ||
+      !$this->validateWithinAgencyHours($form_state, $agency_id, $date, self::DATE_ERROR_NAME) ||
+      !$this->validateWithinAdviserHours($form_state, $adviser_id, $date, self::DATE_ERROR_NAME) ||
+      ($adviser_id !== '' && !$this->validateNoDoubleBooking($form_state, $agency_id, $adviser_id, $date, self::DATE_ERROR_NAME))
+    ) {
       $form_state->set('step', 4);
       $form_state->setRebuild();
       return;
     }
+
+    // Prepare the date in UTC for storage.
+    $storage_date = clone $date;
+    $storage_date->setTimezone(new \DateTimeZone('UTC'));
+    $formatted_date = $storage_date->format('Y-m-d\\TH:i:s');
 
     try {
       $appointment = AppointmentEntity::create([
@@ -228,7 +243,7 @@ class AppointmentBookingForm extends FormBase {
         'field_appointment_agency' => $data['agency'] ?? NULL,
         'field_appointment_type' => $data['appointment_type'] ?? NULL,
         'field_appointment_adviser' => $data['adviser'] ?? ($this->tempStore->get('selected_adviser') ?? NULL),
-        'field_appointment_date' => $date,
+        'field_appointment_date' => $formatted_date,
         'field_customer_name' => $data['customer_name'] ?? NULL,
         'field_customer_email' => $data['customer_email'] ?? NULL,
         'field_customer_phone' => $data['customer_phone'] ?? NULL,
@@ -243,20 +258,21 @@ class AppointmentBookingForm extends FormBase {
       }
 
       $form_state->setRedirect('appointment.summary', ['appointment' => $appointment->id()]);
-
     } catch (\Exception $e) {
       $this->messenger()->addError($this->t('Error saving appointment: @msg', ['@msg' => $e->getMessage()]));
     }
   }
 
-  public function updateAdviserOptions(array &$form, FormStateInterface $form_state) {
+  public function updateAdviserOptions(array &$form, FormStateInterface $form_state)
+  {
     $this->tempStore->set('selected_agency', $form_state->getValue('agency'));
     $this->tempStore->set('selected_type', $form_state->getValue('appointment_type'));
 
     return $form['adviser_container'];
   }
 
-  protected function getAgencyOptions(): array {
+  protected function getAgencyOptions(): array
+  {
     $ids = \Drupal::entityQuery('agency')
       ->accessCheck(TRUE)
       ->sort('label')
@@ -271,7 +287,8 @@ class AppointmentBookingForm extends FormBase {
     return $options;
   }
 
-  protected function getAppointmentTypeOptions(): array {
+  protected function getAppointmentTypeOptions(): array
+  {
     $tids = \Drupal::entityQuery('taxonomy_term')
       ->accessCheck(TRUE)
       ->condition('vid', 'appointment_type')
@@ -287,7 +304,8 @@ class AppointmentBookingForm extends FormBase {
     return $options;
   }
 
-  protected function getAvailableAdvisers(): array {
+  protected function getAvailableAdvisers(): array
+  {
     $agency = $this->tempStore->get('selected_agency') ?? NULL;
     $type = $this->tempStore->get('selected_type') ?? NULL;
 
@@ -339,5 +357,4 @@ class AppointmentBookingForm extends FormBase {
 
     return $options;
   }
-
 }
