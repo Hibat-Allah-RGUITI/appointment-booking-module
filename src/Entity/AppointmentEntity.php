@@ -47,6 +47,8 @@ use Drupal\views\EntityViewsData;
     'form' => [
       'add' => AppointmentEntityForm::class,
       'edit' => AppointmentEntityForm::class,
+      'personal_info' => AppointmentEntityForm::class,
+      'details' => AppointmentEntityForm::class,
       'delete' => ContentEntityDeleteForm::class,
       'delete-multiple-confirm' => DeleteMultipleForm::class,
       'revision-delete' => RevisionDeleteForm::class,
@@ -87,7 +89,8 @@ use Drupal\views\EntityViewsData;
     'revision_log_message' => 'revision_log',
   ],
 )]
-class AppointmentEntity extends EditorialContentEntityBase implements AppointmentEntityInterface {
+class AppointmentEntity extends EditorialContentEntityBase implements AppointmentEntityInterface
+{
 
   use EntityChangedTrait;
   use EntityOwnerTrait;
@@ -95,7 +98,8 @@ class AppointmentEntity extends EditorialContentEntityBase implements Appointmen
   /**
    * {@inheritdoc}
    */
-  public function label() {
+  public function label()
+  {
     $label = parent::label();
     if ($label === NULL || $label === '') {
       $id = $this->id();
@@ -110,7 +114,8 @@ class AppointmentEntity extends EditorialContentEntityBase implements Appointmen
   /**
    * {@inheritdoc}
    */
-  public function preSave(EntityStorageInterface $storage): void {
+  public function preSave(EntityStorageInterface $storage): void
+  {
     parent::preSave($storage);
     if (!$this->getOwnerId()) {
       // If no owner has been set explicitly, make the anonymous user the owner.
@@ -121,14 +126,15 @@ class AppointmentEntity extends EditorialContentEntityBase implements Appointmen
   /**
    * {@inheritdoc}
    */
-  public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
+  public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array
+  {
 
     $fields = parent::baseFieldDefinitions($entity_type);
 
     $fields['label'] = BaseFieldDefinition::create('string')
       ->setRevisionable(TRUE)
       ->setTranslatable(TRUE)
-      ->setLabel(t('Label'))
+      ->setLabel(new TranslatableMarkup('Label'))
       ->setRequired(TRUE)
       ->setSetting('max_length', 255)
       ->setDisplayOptions('form', [
@@ -145,7 +151,7 @@ class AppointmentEntity extends EditorialContentEntityBase implements Appointmen
 
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setRevisionable(TRUE)
-      ->setLabel(t('Status'))
+      ->setLabel(new TranslatableMarkup('Status'))
       ->setDefaultValue(TRUE)
       ->setSetting('on_label', 'Enabled')
       ->setDisplayOptions('form', [
@@ -169,7 +175,7 @@ class AppointmentEntity extends EditorialContentEntityBase implements Appointmen
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')
       ->setRevisionable(TRUE)
       ->setTranslatable(TRUE)
-      ->setLabel(t('Author'))
+      ->setLabel(new TranslatableMarkup('Author'))
       ->setSetting('target_type', 'user')
       ->setDefaultValueCallback(self::class . '::getDefaultEntityOwner')
       ->setDisplayOptions('form', [
@@ -190,9 +196,9 @@ class AppointmentEntity extends EditorialContentEntityBase implements Appointmen
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['created'] = BaseFieldDefinition::create('created')
-      ->setLabel(t('Authored on'))
+      ->setLabel(new TranslatableMarkup('Authored on'))
       ->setTranslatable(TRUE)
-      ->setDescription(t('The time that the appointment was created.'))
+      ->setDescription(new TranslatableMarkup('The time that the appointment was created.'))
       ->setDisplayOptions('view', [
         'label' => 'above',
         'type' => 'timestamp',
@@ -206,11 +212,10 @@ class AppointmentEntity extends EditorialContentEntityBase implements Appointmen
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['changed'] = BaseFieldDefinition::create('changed')
-      ->setLabel(t('Changed'))
+      ->setLabel(new TranslatableMarkup('Changed'))
       ->setTranslatable(TRUE)
-      ->setDescription(t('The time that the appointment was last edited.'));
+      ->setDescription(new TranslatableMarkup('The time that the appointment was last edited.'));
 
     return $fields;
   }
-
 }

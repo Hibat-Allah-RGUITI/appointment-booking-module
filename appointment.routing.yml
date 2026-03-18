@@ -21,3 +21,55 @@ appointment.book_form:
     _title: 'Book an appointment'
   requirements:
     _permission: 'access content'
+
+appointment.summary:
+  path: '/appointment/{appointment}/summary'
+  defaults:
+    _controller: '\Drupal\appointment\Controller\AppointmentSummaryController::show'
+    _title: 'Appointment Summary'
+  requirements:
+    _permission: 'access content'
+    appointment: \d+
+  options:
+    parameters:
+      appointment:
+        type: 'entity:appointment'
+
+appointment.edit_personal:
+  path: '/appointment/{appointment}/edit-personal'
+  defaults:
+    _entity_form: 'appointment.personal_info'
+    _title: 'Edit Personal Information'
+  requirements:
+    _permission: 'access content'
+    appointment: \d+
+  options:
+    parameters:
+      appointment:
+        type: 'entity:appointment'
+
+appointment.edit_details:
+  path: '/appointment/{appointment}/edit-details'
+  defaults:
+    _entity_form: 'appointment.details'
+    _title: 'Edit Appointment Details'
+  requirements:
+    _permission: 'access content'
+    appointment: \d+
+  options:
+    parameters:
+      appointment:
+        type: 'entity:appointment'
+
+appointment.cancel:
+  path: '/appointment/{appointment}/cancel'
+  defaults:
+    _controller: '\Drupal\appointment\Controller\AppointmentSummaryController::cancel'
+    _title: 'Cancel Appointment'
+  requirements:
+    _permission: 'access content'
+    appointment: \d+
+  options:
+    parameters:
+      appointment:
+        type: 'entity:appointment'

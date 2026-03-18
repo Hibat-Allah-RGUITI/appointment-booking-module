@@ -1,0 +1,73 @@
+{#
+/**
+ * @file
+ * Default theme implementation for appointment summary.
+ *
+ * Available variables:
+ * - appointment: The appointment entity.
+ * - personal_info_edit_url: URL for editing personal information.
+ * - appointment_details_edit_url: URL for editing appointment details.
+ * - appointment_cancel_url: URL for an action to cancel the appointment.
+ */
+#}
+{% set status_val = appointment.field_status.0.value|default('') %}
+
+<div class="appointment-summary-container">
+
+  {# Section 1: Personal Information #}
+  <section class="appointment-summary-section personal-info">
+    <h2>{{ 'Personal Information'|t }}</h2>
+    <div class="personal-info-details">
+      <p><strong>{{ 'Name:'|t }}</strong> {{ appointment.field_customer_name.0.value|default('') }}</p>
+      <p><strong>{{ 'Email:'|t }}</strong> {{ appointment.field_customer_email.0.value|default('') }}</p>
+      <p><strong>{{ 'Phone:'|t }}</strong> {{ appointment.field_customer_phone.0.value|default('') }}</p>
+    </div>
+    {% if status_val != 'cancelled' %}
+      <div class="edit-action">
+        <a href="{{ personal_info_edit_url }}" class="button">{{ 'Edit Personal Information'|t }}</a>
+      </div>
+    {% endif %}
+  </section>
+
+  <hr>
+
+  {# Section 2: Appointment Details #}
+  <section class="appointment-summary-section appointment-details">
+    <h2>{{ 'Appointment Details'|t }}</h2>
+    <div class="appointment-details-content">
+      <p>
+        <strong>{{ 'Agency:'|t }}</strong>
+        {% if appointment.field_appointment_agency.entity %}
+          {{ appointment.field_appointment_agency.entity.label.0.value|default(appointment.field_appointment_agency.entity.label()) }}
+        {% endif %}
+      </p>
+      <p>
+        <strong>{{ 'Adviser:'|t }}</strong>
+        {% if appointment.field_appointment_adviser.entity %}
+          {{ appointment.field_appointment_adviser.entity.displayname.0.value|default(appointment.field_appointment_adviser.entity.label()) }}
+        {% endif %}
+      </p>
+      <p>
+        <strong>{{ 'Type:'|t }}</strong>
+        {% if appointment.field_appointment_type.entity %}
+          {{ appointment.field_appointment_type.entity.label.0.value|default(appointment.field_appointment_type.entity.label()) }}
+        {% endif %}
+      </p>
+      <p>
+        <strong>{{ 'Date:'|t }}</strong>
+        {% if appointment.field_appointment_date.0.value %}
+          {{ appointment.field_appointment_date.0.value|date('d/m/Y H:i') }}
+        {% endif %}
+      </p>
+    </div>
+    <div class="edit-action">
+      {% if status_val != 'cancelled' %}
+        <a href="{{ appointment_details_edit_url }}" class="button">{{ 'Edit Appointment Details'|t }}</a>
+        <a href="{{ appointment_cancel_url }}" class="button button--danger" style="color: red; margin-left: 10px;">{{ 'Cancel Appointment'|t }}</a>
+      {% else %}
+        <span class="appointment-cancelled-label" style="color: grey; margin-left: 10px;">{{ 'This appointment is cancelled.'|t }}</span>
+      {% endif %}
+    </div>
+  </section>
+
+</div>

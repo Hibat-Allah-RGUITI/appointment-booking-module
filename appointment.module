@@ -1,0 +1,178 @@
+<?php
+
+declare(strict_types=1);
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Access\AccessDeniedHttpException;
+use Drupal\views\ViewExecutable;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
+use Drupal\views\Plugin\views\query\Sql;
+use Drupal\appointment\Entity\AgencyEntity;
+use Drupal\user\Entity\User;
+
+/**
+ * Implements hook_views_pre_view().
+ */
+function appointment_views_pre_view(ViewExecutable $view, string $display_id, array &$args): void {
+  if ($view->id() !== 'appointments') {
+    return;
+  }
+
+  // Enforce admin-only access at runtime (without changing YAML).
+  if (!\Drupal::currentUser()->hasPermission('administer appointment')) {
+    throw new AccessDeniedHttpException();
+  }
+}
+
+/**
+ * Implements hook_form_views_exposed_form_alter().
+ */
+function appointment_form_views_exposed_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void {
+  $view = $form_state->get('view');
+  if (!$view instanceof ViewExecutable) {
+    return;
+  }
+
+  // Only target the admin appointments view.
+  if ($view->id() !== 'appointments') {
+    return;
+  }
+
+  // Add dropdown filters (even if the View config doesn't expose them).
+  $form['appointment_filters'] = [
+    '#type' => 'details',
+    '#title' => t('Filters'),
+    '#open' => TRUE,
+    '#weight' => -50,
+  ];
+
+  $form['appointment_filters']['agency'] = [
+    '#type' => 'select',
+    '#title' => t('Agency'),
+    '#empty_option' => t('- Any -'),
+    '#options' => _appointment_filter_agency_options(),
+    '#default_value' => $form_state->getValue('agency') ?? \Drupal::request()->query->get('agency'),
+  ];
+
+  $form['appointment_filters']['adviser'] = [
+    '#type' => 'select',
+    '#title' => t('Adviser'),
+    '#empty_option' => t('- Any -'),
+    '#options' => _appointment_filter_adviser_options(),
+    '#default_value' => $form_state->getValue('adviser') ?? \Drupal::request()->query->get('adviser'),
+  ];
+
+  $form['appointment_filters']['appointment_status'] = [
+    '#type' => 'select',
+    '#title' => t('Status'),
+    '#empty_option' => t('- Any -'),
+    '#options' => _appointment_filter_status_options(),
+    '#default_value' => $form_state->getValue('appointment_status') ?? \Drupal::request()->query->get('appointment_status'),
+  ];
+
+  // Ensure our elements are not nested in the query string by form element name.
+  $form['#tree'] = FALSE;
+}
+
+/**
+ * Implements hook_views_query_alter().
+ */
+function appointment_views_query_alter(ViewExecutable $view, QueryPluginBase $query): void {
+  if ($view->id() !== 'appointments') {
+    return;
+  }
+
+  // This alter is only implemented for SQL-based Views queries.
+  if (!$query instanceof Sql) {
+    return;
+  }
+
+  // Get filter input from exposed form (preferred) or query string.
+  $input = $view->getExposedInput() ?: \Drupal::request()->query->all();
+
+  $agency = isset($input['agency']) ? (string) $input['agency'] : '';
+  $adviser = isset($input['adviser']) ? (string) $input['adviser'] : '';
+  $status = isset($input['appointment_status']) ? (string) $input['appointment_status'] : '';
+
+  // Filter by agency/adviser via their target IDs.
+  if ($agency !== '') {
+    $alias = $query->ensureTable('appointment__field_appointment_agency');
+    $query->addWhere(0, $alias . '.field_appointment_agency_target_id', (int) $agency, '=');
+  }
+  if ($adviser !== '') {
+    $alias = $query->ensureTable('appointment__field_appointment_adviser');
+    $query->addWhere(0, $alias . '.field_appointment_adviser_target_id', (int) $adviser, '=');
+  }
+
+  // Filter by status option value.
+  if ($status !== '') {
+    $alias = $query->ensureTable('appointment__field_status');
+    $query->addWhere(0, $alias . '.field_status_value', $status, '=');
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function appointment_theme($existing, $type, $theme, $path) {
+  return [
+    'appointment_summary' => [
+      'variables' => [
+        'appointment' => NULL,
+        'personal_info_edit_url' => NULL,
+        'appointment_details_edit_url' => NULL,
+        'appointment_cancel_url' => NULL,
+      ],
+    ],
+  ];
+}
+
+/**
+ * Helper to get agency options for filtering.
+ */
+function _appointment_filter_agency_options(): array {
+  $ids = \Drupal::entityQuery('agency')
+    ->accessCheck(TRUE)
+    ->sort('label')
+    ->execute();
+  if (!$ids) {
+    return [];
+  }
+  $options = [];
+  foreach (AgencyEntity::loadMultiple($ids) as $agency) {
+    $options[(string) $agency->id()] = $agency->label();
+  }
+  return $options;
+}
+
+/**
+ * Helper to get adviser options for filtering.
+ */
+function _appointment_filter_adviser_options(): array {
+  $uids = \Drupal::entityQuery('user')
+    ->accessCheck(TRUE)
+    ->condition('roles', 'adviser')
+    ->sort('name')
+    ->execute();
+  if (!$uids) {
+    return [];
+  }
+  $options = [];
+  foreach (User::loadMultiple($uids) as $user) {
+    $options[(string) $user->id()] = $user->getDisplayName();
+  }
+  return $options;
+}
+
+/**
+ * Helper to get status options for filtering.
+ */
+function _appointment_filter_status_options(): array {
+  $definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions('appointment', 'appointment');
+  if (!isset($definitions['field_status'])) {
+    return [];
+  }
+  $storage = $definitions['field_status']->getFieldStorageDefinition();
+  $allowed = $storage->getSetting('allowed_values') ?? [];
+  return is_array($allowed) ? $allowed : [];
+}
