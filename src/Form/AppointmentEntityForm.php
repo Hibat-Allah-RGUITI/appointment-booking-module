@@ -234,6 +234,20 @@ final class AppointmentEntityForm extends ContentEntityForm
       case SAVED_UPDATED:
         $this->messenger()->addStatus($this->t('The appointment %label has been updated.', $message_args));
         $this->logger('appointment')->notice('The appointment %label has been updated.', $logger_args);
+
+        // Send modification email.
+        $email = $this->entity->get('field_customer_email')->value;
+        if ($email) {
+          $mail_manager = \Drupal::service('plugin.manager.mail');
+          $langcode = 'en';
+          $params = [
+            'title' => $this->entity->label(),
+            'name' => $this->entity->get('field_customer_name')->value,
+            'date' => $this->entity->get('field_appointment_date')->value,
+            'agency' => $this->entity->get('field_appointment_agency')->entity ? $this->entity->get('field_appointment_agency')->entity->label() : '',
+          ];
+          $mail_manager->mail('appointment', 'appointment_modification', $email, $langcode, $params, NULL, TRUE);
+        }
         break;
 
       default:

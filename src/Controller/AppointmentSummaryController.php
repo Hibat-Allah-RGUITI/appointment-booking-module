@@ -192,6 +192,19 @@ class AppointmentSummaryController extends ControllerBase
     $appointment->set('field_status', 'cancelled');
     $appointment->save();
 
+    // Send cancellation email.
+    $email = $appointment->get('field_customer_email')->value;
+    if ($email) {
+      $mail_manager = \Drupal::service('plugin.manager.mail');
+      $langcode = 'en';
+      $params = [
+        'title' => $appointment->label(),
+        'name' => $appointment->get('field_customer_name')->value,
+        'date' => $appointment->get('field_appointment_date')->value,
+      ];
+      $mail_manager->mail('appointment', 'appointment_cancellation', $email, $langcode, $params, NULL, TRUE);
+    }
+
     $this->messenger()->addStatus($this->t('Appointment has been cancelled.'));
 
     return $this->redirect('appointment.summary', ['appointment' => $appointment->id()]);

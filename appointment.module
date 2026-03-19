@@ -129,6 +129,42 @@ function appointment_theme($existing, $type, $theme, $path) {
 }
 
 /**
+ * Implements hook_mail().
+ */
+function appointment_mail($key, &$message, $params) {
+  $options = [
+    'langcode' => $message['langcode'],
+  ];
+
+  switch ($key) {
+    case 'appointment_confirmation':
+      $message['from'] = \Drupal::config('system.site')->get('mail');
+      $message['subject'] = t('Appointment Confirmation: @title', ['@title' => $params['title']], $options);
+      $message['body'][] = t('Hello @name,', ['@name' => $params['name']], $options);
+      $message['body'][] = t('Your appointment has been confirmed for @date.', ['@date' => $params['date']], $options);
+      $message['body'][] = t('Agency: @agency', ['@agency' => $params['agency']], $options);
+      $message['body'][] = t('Type: @type', ['@type' => $params['type']], $options);
+      break;
+
+    case 'appointment_modification':
+      $message['from'] = \Drupal::config('system.site')->get('mail');
+      $message['subject'] = t('Appointment Modification: @title', ['@title' => $params['title']], $options);
+      $message['body'][] = t('Hello @name,', ['@name' => $params['name']], $options);
+      $message['body'][] = t('Your appointment has been modified. Here is the new information:', $options);
+      $message['body'][] = t('Date: @date', ['@date' => $params['date']], $options);
+      $message['body'][] = t('Agency: @agency', ['@agency' => $params['agency']], $options);
+      break;
+
+    case 'appointment_cancellation':
+      $message['from'] = \Drupal::config('system.site')->get('mail');
+      $message['subject'] = t('Appointment Cancellation: @title', ['@title' => $params['title']], $options);
+      $message['body'][] = t('Hello @name,', ['@name' => $params['name']], $options);
+      $message['body'][] = t('Your appointment scheduled for @date has been cancelled.', ['@date' => $params['date']], $options);
+      break;
+  }
+}
+
+/**
  * Helper to get agency options for filtering.
  */
 function _appointment_filter_agency_options(): array {

@@ -62,6 +62,11 @@ class AppointmentBookingForm extends FormBase
           '#options' => $this->getAgencyOptions(),
           '#empty_option' => $this->t('- Select -'),
           '#required' => TRUE,
+          '#ajax' => [
+            'callback' => '::updateAdviserOptions',
+            'wrapper' => 'adviser-wrapper',
+            'event' => 'change',
+          ],
         ];
         break;
 
@@ -253,8 +258,23 @@ class AppointmentBookingForm extends FormBase
       $appointment->save();
       $this->messenger()->addMessage($this->t('Appointment successfully booked. ID: @id', ['@id' => $appointment->id()]));
 
-      $phone = $data['customer_phone'] ?? '';
       $email = $data['customer_email'] ?? '';
+      $phone = $data['customer_phone'] ?? '';
+
+      // Send confirmation email.
+      if ($email !== '') {
+        $mail_manager = \Drupal::service('plugin.manager.mail');
+        $langcode = 'en';
+        $params = [
+          'title' => $appointment->label(),
+          'name' => $appointment->get('field_customer_name')->value,
+          'date' => $appointment->get('field_appointment_date')->value,
+          'agency' => $appointment->get('field_appointment_agency')->entity ? $appointment->get('field_appointment_agency')->entity->label() : '',
+          'type' => $appointment->get('field_appointment_type')->entity ? $appointment->get('field_appointment_type')->entity->label() : '',
+        ];
+        $mail_manager->mail('appointment', 'appointment_confirmation', $email, $langcode, $params, NULL, TRUE);
+      }
+
       for ($i = 1; $i <= 5; $i++) {
         $this->tempStore->delete('step_' . $i);
       }
