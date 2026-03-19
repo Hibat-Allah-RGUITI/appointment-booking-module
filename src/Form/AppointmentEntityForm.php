@@ -7,6 +7,8 @@ namespace Drupal\appointment\Form;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\appointment\Traits\AppointmentValidationTrait;
+use Drupal\Core\TempStore\PrivateTempStoreFactory;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Form controller for the appointment entity edit forms.
@@ -17,10 +19,66 @@ final class AppointmentEntityForm extends ContentEntityForm
   use AppointmentValidationTrait;
 
   /**
+   * The tempstore factory.
+   *
+   * @var \Drupal\Core\TempStore\PrivateTempStore
+   */
+  protected $tempStore;
+
+  /**
+   * Constructs a new AppointmentEntityForm.
+   *
+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
+   *   The entity repository service.
+   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
+   *   The entity type bundle service.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   The time service.
+   * @param \Drupal\Core\TempStore\PrivateTempStoreFactory $temp_store_factory
+   *   The tempstore factory.
+   */
+  public function __construct(
+    $entity_repository,
+    $entity_type_bundle_info,
+    $time,
+    PrivateTempStoreFactory $temp_store_factory
+  ) {
+    parent::__construct($entity_repository, $entity_type_bundle_info, $time);
+    $this->tempStore = $temp_store_factory->get('appointment_booking');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container)
+  {
+    return new static(
+      $container->get('entity.repository'),
+      $container->get('entity_type.bundle.info'),
+      $container->get('datetime.time'),
+      $container->get('tempstore.private')
+    );
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state): array
   {
+    $operation = $this->getOperation();
+
+    if (in_array($operation, ['personal_info', 'details'])) {
+      // Security: verify the phone number in session matches the appointment.
+      $verified_phone = (string) $this->tempStore->get('verified_phone_' . $this->entity->id());
+      $appointment_phone = (string) $this->entity->get('field_customer_phone')->value;
+
+      if ($verified_phone !== $appointment_phone) {
+        $this->messenger()->addError($this->t('Please verify your phone number to modify this appointment.'));
+        $form_state->setRedirect('appointment.lookup', ['appointment' => $this->entity->id()], ['query' => ['action' => $operation]]);
+        return [];
+      }
+    }
+
     $form = parent::buildForm($form, $form_state);
 
     $operation = $this->getOperation();

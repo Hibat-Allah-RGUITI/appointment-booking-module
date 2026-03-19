@@ -22,6 +22,35 @@ appointment.book_form:
   requirements:
     _permission: 'access content'
 
+appointment.login:
+  path: '/login-appointment'
+  defaults:
+    _form: '\Drupal\appointment\Form\AppointmentLoginForm'
+    _title: 'Login to my appointments'
+  requirements:
+    _permission: 'access content'
+
+appointment.my_appointments:
+  path: '/my-appointments'
+  defaults:
+    _controller: '\Drupal\appointment\Controller\AppointmentSummaryController::listMy'
+    _title: 'My Appointments'
+  requirements:
+    _permission: 'access content'
+
+appointment.lookup:
+  path: '/appointment/{appointment}/verify'
+  defaults:
+    _form: '\Drupal\appointment\Form\AppointmentLookupForm'
+    _title: 'Verify Identity'
+  requirements:
+    _permission: 'access content'
+    appointment: \d+
+  options:
+    parameters:
+      appointment:
+        type: 'entity:appointment'
+
 appointment.summary:
   path: '/appointment/{appointment}/summary'
   defaults:

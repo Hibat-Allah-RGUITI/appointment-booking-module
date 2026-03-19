@@ -122,6 +122,7 @@ function appointment_theme($existing, $type, $theme, $path) {
         'personal_info_edit_url' => NULL,
         'appointment_details_edit_url' => NULL,
         'appointment_cancel_url' => NULL,
+        'my_appointments_url' => NULL,
       ],
     ],
   ];

@@ -253,11 +253,18 @@ class AppointmentBookingForm extends FormBase
       $appointment->save();
       $this->messenger()->addMessage($this->t('Appointment successfully booked. ID: @id', ['@id' => $appointment->id()]));
 
+      $phone = $data['customer_phone'] ?? '';
+      $email = $data['customer_email'] ?? '';
       for ($i = 1; $i <= 5; $i++) {
         $this->tempStore->delete('step_' . $i);
       }
 
-      $form_state->setRedirect('appointment.summary', ['appointment' => $appointment->id()]);
+      // Store the verified email in session so the user can access their list.
+      if ($email !== '') {
+        $this->tempStore->set('verified_email', (string) $email);
+      }
+
+      $form_state->setRedirect('appointment.my_appointments');
     } catch (\Exception $e) {
       $this->messenger()->addError($this->t('Error saving appointment: @msg', ['@msg' => $e->getMessage()]));
     }
