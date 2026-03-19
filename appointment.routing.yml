@@ -102,3 +102,19 @@ appointment.cancel:
     parameters:
       appointment:
         type: 'entity:appointment'
+
+appointment.export_csv:
+  path: '/admin/appointment/export-csv'
+  defaults:
+    _controller: '\Drupal\appointment\Controller\AppointmentExportController::start'
+    _title: 'Export Appointments'
+  requirements:
+    _permission: 'administer appointment'
+
+appointment.export_download:
+  path: '/admin/appointment/export-download/{uri}'
+  defaults:
+    _controller: '\Drupal\appointment\Controller\AppointmentExportController::download'
+    _title: 'Download Export'
+  requirements:
+    _permission: 'administer appointment'
