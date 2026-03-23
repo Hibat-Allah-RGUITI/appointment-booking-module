@@ -118,3 +118,10 @@ appointment.export_download:
     _title: 'Download Export'
   requirements:
     _permission: 'administer appointment'
+
+appointment.calendar_events:
+  path: '/appointment/events'
+  defaults:
+    _controller: '\Drupal\appointment\Controller\AppointmentSummaryController::getEvents'
+  requirements:
+    _permission: 'access content'
