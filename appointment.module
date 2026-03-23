@@ -70,8 +70,37 @@ function appointment_form_views_exposed_form_alter(array &$form, FormStateInterf
     '#default_value' => $form_state->getValue('appointment_status') ?? \Drupal::request()->query->get('appointment_status'),
   ];
 
+  $form['export_csv'] = [
+    '#type' => 'submit',
+    '#value' => t('Export to CSV'),
+    '#weight' => 10,
+    '#submit' => ['_appointment_exposed_form_export_submit'],
+  ];
+
   // Ensure our elements are not nested in the query string by form element name.
   $form['#tree'] = FALSE;
+}
+
+/**
+ * Submit handler to trigger CSV export from the exposed filters form.
+ */
+function _appointment_exposed_form_export_submit(array &$form, FormStateInterface $form_state): void {
+  $query = [];
+  $values = $form_state->getValues();
+
+  // Extract relevant filter values.
+  if (!empty($values['agency'])) {
+    $query['agency'] = $values['agency'];
+  }
+  if (!empty($values['adviser'])) {
+    $query['adviser'] = $values['adviser'];
+  }
+  if (!empty($values['appointment_status'])) {
+    $query['appointment_status'] = $values['appointment_status'];
+  }
+
+  // Redirect to our export controller with filter parameters.
+  $form_state->setRedirect('appointment.export_csv', [], ['query' => $query]);
 }
 
 /**

@@ -13,6 +13,8 @@ use Drupal\taxonomy\Entity\Term;
 use Drupal\appointment\Entity\AgencyEntity;
 use Drupal\appointment\Traits\AppointmentValidationTrait;
 
+use Drupal\Core\Url;
+
 /**
  * Multi-step booking form for appointments.
  */
@@ -51,6 +53,7 @@ class AppointmentBookingForm extends FormBase
       '#type' => 'container',
       '#attributes' => ['id' => 'adviser-wrapper'],
       '#attached' => [],
+      '#tree' => TRUE,
     ];
 
     switch ($step) {
@@ -90,9 +93,39 @@ class AppointmentBookingForm extends FormBase
         break;
 
       case 4:
+        $agency_id = (string) $this->tempStore->get('selected_agency');
+        $adviser_id = (string) $this->tempStore->get('selected_adviser');
+
+        if (empty($adviser_id)) {
+          $this->messenger()->addError($this->t('Please go back and select an adviser first.'));
+          $form_state->set('step', 3);
+          $form_state->setRebuild();
+          return [];
+        }
+
+        $form['appointment_date_calendar'] = [
+          '#type' => 'container',
+          '#attributes' => [
+            'id' => 'calendar-wrapper',
+            'class' => ['appointment-calendar-container'],
+          ],
+          '#markup' => '<div class="calendar-loading">' . $this->t('Loading calendar...') . '</div>',
+          '#attached' => [
+            'library' => ['appointment/booking_calendar'],
+            'drupalSettings' => [
+              'appointment' => [
+                'agency_id' => $agency_id,
+                'adviser_id' => $adviser_id,
+                'events_url' => Url::fromRoute('appointment.calendar_events', [], ['absolute' => TRUE])->toString(),
+              ],
+            ],
+          ],
+        ];
+
+        // Hidden field to store the selected date from JS.
         $form['appointment_date'] = [
-          '#type' => 'datetime',
-          '#title' => $this->t('Appointment date'),
+          '#type' => 'hidden',
+          '#attributes' => ['id' => 'selected-appointment-date'],
           '#required' => TRUE,
         ];
         break;
@@ -155,7 +188,13 @@ class AppointmentBookingForm extends FormBase
     }
 
     if ($step === 4) {
-      $date = $this->normalizeDateValue($form_state->getValue('appointment_date'));
+      $date_val = (string) $form_state->getValue('appointment_date');
+      if (empty($date_val)) {
+        $form_state->setErrorByName(self::DATE_ERROR_NAME, $this->t('Please select a date and time from the calendar.'));
+        return;
+      }
+
+      $date = new DrupalDateTime($date_val);
       if (!$date) {
         $form_state->setErrorByName(self::DATE_ERROR_NAME, $this->t('Please select a valid appointment date and time.'));
         return;
@@ -215,7 +254,12 @@ class AppointmentBookingForm extends FormBase
       }
     }
 
-    $date = $this->normalizeDateValue($data['appointment_date'] ?? NULL);
+    $date_raw = $data['appointment_date'] ?? NULL;
+    $date = NULL;
+    if ($date_raw) {
+      $date = new DrupalDateTime($date_raw);
+    }
+
     if (!$date) {
       $this->messenger()->addError($this->t('Please select a valid appointment date and time.'));
       $form_state->set('step', 4);

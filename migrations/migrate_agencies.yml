@@ -1,0 +1,18 @@
+id: migrate_agencies
+label: 'Agencies Migration'
+source:
+  plugin: csv
+  path: 'modules/custom/appointment/migrations/agencies.csv'
+  header_offset: 0
+  ids:
+    - id
+  column_names:
+    - id
+    - name
+    - address
+process:
+  name: name
+  field_address: address
+destination:
+  plugin: 'entity:agency'
+migration_dependencies: {}

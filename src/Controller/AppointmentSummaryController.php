@@ -9,6 +9,11 @@ use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+
+use Psr\Log\LoggerInterface;
+
 /**
  * Controller for the appointment summary page.
  */
@@ -23,14 +28,24 @@ class AppointmentSummaryController extends ControllerBase
   protected $tempStore;
 
   /**
+   * The logger.
+   *
+   * @var \Psr\Log\LoggerInterface
+   */
+  protected $logger;
+
+  /**
    * Constructs a new AppointmentSummaryController.
    *
    * @param \Drupal\Core\TempStore\PrivateTempStoreFactory $temp_store_factory
    *   The tempstore factory.
+   * @param \Psr\Log\LoggerInterface $logger
+   *   The logger.
    */
-  public function __construct(PrivateTempStoreFactory $temp_store_factory)
+  public function __construct(PrivateTempStoreFactory $temp_store_factory, LoggerInterface $logger)
   {
     $this->tempStore = $temp_store_factory->get('appointment_booking');
+    $this->logger = $logger;
   }
 
   /**
@@ -39,7 +54,8 @@ class AppointmentSummaryController extends ControllerBase
   public static function create(ContainerInterface $container)
   {
     return new static(
-      $container->get('tempstore.private')
+      $container->get('tempstore.private'),
+      $container->get('logger.factory')->get('appointment')
     );
   }
 
@@ -93,7 +109,7 @@ class AppointmentSummaryController extends ControllerBase
   /**
    * Lists all appointments for the logged-in user.
    */
-  public function listMy()
+  public function list()
   {
     $current_user = \Drupal::currentUser();
     $verified_email = '';
@@ -208,5 +224,62 @@ class AppointmentSummaryController extends ControllerBase
     $this->messenger()->addStatus($this->t('Appointment has been cancelled.'));
 
     return $this->redirect('appointment.summary', ['appointment' => $appointment->id()]);
+  }
+
+  /**
+   * JSON response for existing appointments (FullCalendar events).
+   */
+  public function getEvents(Request $request): JsonResponse
+  {
+    $adviser_id = $request->query->get('adviser');
+    $agency_id = $request->query->get('agency');
+
+    $this->logger->info('getEvents called with adviser: @adviser, agency: @agency', [
+      '@adviser' => $adviser_id,
+      '@agency' => $agency_id,
+    ]);
+
+    if (!$adviser_id) {
+      $this->logger->warning('getEvents: Missing adviser ID.');
+      return new JsonResponse([]);
+    }
+
+    $query = \Drupal::entityQuery('appointment')
+      ->accessCheck(TRUE)
+      ->condition('field_appointment_adviser', $adviser_id)
+      ->condition('field_status', 'cancelled', '<>')
+      ->sort('field_appointment_date', 'ASC');
+
+    if ($agency_id) {
+      $query->condition('field_appointment_agency', $agency_id);
+    }
+
+    $ids = $query->execute();
+
+    $this->logger->info('getEvents: Found @count appointments.', ['@count' => count($ids)]);
+
+    /** @var \Drupal\appointment\AppointmentEntityInterface[] $appointments */
+    $appointments = \Drupal::entityTypeManager()->getStorage('appointment')->loadMultiple($ids);
+
+    $events = [];
+    foreach ($appointments as $appointment) {
+      $date_val = $appointment->get('field_appointment_date')->value;
+      if ($date_val) {
+        // Drupal stores dates in UTC.
+        $start = new \DateTime($date_val, new \DateTimeZone('UTC'));
+        $end = clone $start;
+        $end->modify('+30 minutes'); // Fixed duration for visualization
+
+        $events[] = [
+          'title' => $this->t('Busy')->render(),
+          'start' => $start->format('Y-m-d\TH:i:s\Z'),
+          'end' => $end->format('Y-m-d\TH:i:s\Z'),
+          'color' => '#ff0000',
+          'display' => 'background', // Or 'block' to see the title
+        ];
+      }
+    }
+
+    return new JsonResponse($events);
   }
 }

@@ -12,13 +12,16 @@ use Drupal\user\Entity\User;
 /**
  * Admin filters form for the Appointments view.
  */
-final class AppointmentsAdminFiltersForm extends FormBase {
+final class AppointmentsAdminFiltersForm extends FormBase
+{
 
-  public function getFormId(): string {
+  public function getFormId(): string
+  {
     return 'appointment_appointments_admin_filters_form';
   }
 
-  public function buildForm(array $form, FormStateInterface $form_state): array {
+  public function buildForm(array $form, FormStateInterface $form_state): array
+  {
     $request = $this->getRequest();
     $query = $request->query;
 
@@ -67,10 +70,33 @@ final class AppointmentsAdminFiltersForm extends FormBase {
       '#submit' => ['::resetForm'],
     ];
 
+    $form['actions']['export_csv'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Export to CSV'),
+      '#submit' => ['::exportCsv'],
+    ];
+
     return $form;
   }
 
-  public function submitForm(array &$form, FormStateInterface $form_state): void {
+  /**
+   * Submit handler for CSV export.
+   */
+  public function exportCsv(array &$form, FormStateInterface $form_state): void
+  {
+    $params = [];
+    foreach (['agency', 'adviser', 'appointment_status'] as $key) {
+      $value = (string) ($form_state->getValue($key) ?? '');
+      if ($value !== '') {
+        $params[$key] = $value;
+      }
+    }
+
+    $form_state->setRedirect('appointment.export_csv', [], ['query' => $params]);
+  }
+
+  public function submitForm(array &$form, FormStateInterface $form_state): void
+  {
     $params = [];
     foreach (['agency', 'adviser', 'appointment_status'] as $key) {
       $value = (string) ($form_state->getValue($key) ?? '');
@@ -82,11 +108,13 @@ final class AppointmentsAdminFiltersForm extends FormBase {
     $form_state->setRedirect('<current>', [], ['query' => $params]);
   }
 
-  public function resetForm(array &$form, FormStateInterface $form_state): void {
+  public function resetForm(array &$form, FormStateInterface $form_state): void
+  {
     $form_state->setRedirect('<current>');
   }
 
-  private function getAgencyOptions(): array {
+  private function getAgencyOptions(): array
+  {
     $ids = \Drupal::entityQuery('agency')
       ->accessCheck(TRUE)
       ->sort('label')
@@ -101,7 +129,8 @@ final class AppointmentsAdminFiltersForm extends FormBase {
     return $options;
   }
 
-  private function getAdviserOptions(): array {
+  private function getAdviserOptions(): array
+  {
     $uids = \Drupal::entityQuery('user')
       ->accessCheck(TRUE)
       ->condition('roles', 'adviser')
@@ -117,7 +146,8 @@ final class AppointmentsAdminFiltersForm extends FormBase {
     return $options;
   }
 
-  private function getStatusOptions(): array {
+  private function getStatusOptions(): array
+  {
     $definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions('appointment', 'appointment');
     if (!isset($definitions['field_status'])) {
       return [];
@@ -126,6 +156,4 @@ final class AppointmentsAdminFiltersForm extends FormBase {
     $allowed = $storage->getSetting('allowed_values') ?? [];
     return is_array($allowed) ? $allowed : [];
   }
-
 }
-

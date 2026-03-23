@@ -33,7 +33,7 @@ appointment.login:
 appointment.my_appointments:
   path: '/my-appointments'
   defaults:
-    _controller: '\Drupal\appointment\Controller\AppointmentSummaryController::listMy'
+    _controller: '\Drupal\appointment\Controller\AppointmentSummaryController::list'
     _title: 'My Appointments'
   requirements:
     _permission: 'access content'
@@ -102,3 +102,26 @@ appointment.cancel:
     parameters:
       appointment:
         type: 'entity:appointment'
+
+appointment.export_csv:
+  path: '/admin/appointment/export-csv'
+  defaults:
+    _controller: '\Drupal\appointment\Controller\AppointmentExportController::start'
+    _title: 'Export Appointments'
+  requirements:
+    _permission: 'administer appointment'
+
+appointment.export_download:
+  path: '/admin/appointment/export-download/{uri}'
+  defaults:
+    _controller: '\Drupal\appointment\Controller\AppointmentExportController::download'
+    _title: 'Download Export'
+  requirements:
+    _permission: 'administer appointment'
+
+appointment.calendar_events:
+  path: '/appointment/events'
+  defaults:
+    _controller: '\Drupal\appointment\Controller\AppointmentSummaryController::getEvents'
+  requirements:
+    _permission: 'access content'

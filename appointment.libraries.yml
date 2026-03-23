@@ -1,0 +1,23 @@
+fullcalendar_lib:
+  header: true
+  remote: https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js
+  license:
+    name: MIT
+    url: https://github.com/fullcalendar/fullcalendar/blob/master/LICENSE.md
+    gpl-compatible: true
+  js:
+    https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js: { type: external, minified: true }
+
+booking_calendar:
+  version: 1.x
+  css:
+    theme:
+      css/appointment_calendar.css: {}
+  js:
+    js/appointment_calendar.js: {}
+  dependencies:
+    - core/drupal
+    - core/drupalSettings
+    - core/jquery
+    - core/once
+    - appointment/fullcalendar_lib

@@ -1,0 +1,11 @@
+id,title,customer_name,customer_email,customer_phone,date,agency_id,adviser_id,type_id,status
+1,Rdv Conseil Immo,Mohamed Azizi,m.azizi@gmail.com,0661223344,2026-04-05 10:00:00,1,1,1,pending
+2,Rdv Credit Auto,Amina El Idrissi,a.elidrissi@gmail.com,0662334455,2026-04-06 14:30:00,2,2,2,pending
+3,Rdv Suivi Dossier,Mohamed Azizi,m.azizi@gmail.com,0661223344,2026-04-12 11:00:00,1,4,2,confirmed
+4,Rdv Placement,Sarah Elmoutaouakil,s.elmoutaouakil@gmail.com,0663445566,2026-04-08 11:15:00,1,4,2,pending
+5,Rdv Assurances,Amina El Idrissi,a.elidrissi@gmail.com,0662334455,2026-04-15 16:00:00,2,5,1,pending
+6,Rdv Epargne,Fatima Zahra,f.zahra@gmail.com,0664556677,2026-04-10 10:00:00,4,6,2,confirmed
+7,Rdv Signature,Mohamed Azizi,m.azizi@gmail.com,0661223344,2026-04-20 09:00:00,1,1,1,pending
+8,Rdv Pret Pro,Nabil Karimi,n.karimi@gmail.com,0665667788,2026-04-13 09:30:00,5,8,2,confirmed
+9,Rdv Retraite,Houda Mansouri,h.mansouri@gmail.com,0666778899,2026-04-14 11:00:00,6,9,1,pending
+10,Rdv Revision Taux,Amina El Idrissi,a.elidrissi@gmail.com,0662334455,2026-04-25 10:30:00,2,2,2,pending

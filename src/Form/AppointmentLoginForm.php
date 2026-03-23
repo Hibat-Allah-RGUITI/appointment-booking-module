@@ -10,7 +10,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides a login form for appointments using email.
  */
-class AppointmentLoginForm extends FormBase {
+class AppointmentLoginForm extends FormBase
+{
 
   /**
    * The tempstore factory.
@@ -25,14 +26,16 @@ class AppointmentLoginForm extends FormBase {
    * @param \Drupal\Core\TempStore\PrivateTempStoreFactory $temp_store_factory
    *   The tempstore factory.
    */
-  public function __construct(PrivateTempStoreFactory $temp_store_factory) {
+  public function __construct(PrivateTempStoreFactory $temp_store_factory)
+  {
     $this->tempStore = $temp_store_factory->get('appointment_booking');
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container)
+  {
     return new static(
       $container->get('tempstore.private')
     );
@@ -41,14 +44,16 @@ class AppointmentLoginForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId()
+  {
     return 'appointment_login_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state)
+  {
     // If the user is already "connected" (Drupal user or session), redirect to list.
     $current_user = \Drupal::currentUser();
     $verified_email = $current_user->isAuthenticated() ? $current_user->getEmail() : $this->tempStore->get('verified_email');
@@ -80,7 +85,8 @@ class AppointmentLoginForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state)
+  {
     $email = (string) $form_state->getValue('email');
 
     // Check if any appointment exists for this email.
@@ -101,5 +107,4 @@ class AppointmentLoginForm extends FormBase {
 
     $form_state->setRedirect('appointment.my_appointments');
   }
-
 }
