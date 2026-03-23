@@ -1,0 +1,20 @@
+uuid: 56fdb0fe-d842-4854-b4f0-b256888281bb
+langcode: en
+status: true
+dependencies:
+  module:
+    - appointment
+    - taxonomy
+id: appointment.field_appointment_type
+field_name: field_appointment_type
+entity_type: appointment
+type: entity_reference
+settings:
+  target_type: taxonomy_term
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

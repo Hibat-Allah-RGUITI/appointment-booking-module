@@ -1,0 +1,20 @@
+uuid: da0319da-6b57-4a38-9831-3c90706b024d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.appointment.field_customer_email
+  module:
+    - appointment
+id: appointment.appointment.field_customer_email
+field_name: field_customer_email
+entity_type: appointment
+bundle: appointment
+label: ' Customer email'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: email

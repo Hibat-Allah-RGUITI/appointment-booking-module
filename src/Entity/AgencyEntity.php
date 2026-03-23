@@ -95,6 +95,21 @@ class AgencyEntity extends EditorialContentEntityBase implements AgencyEntityInt
   /**
    * {@inheritdoc}
    */
+  public function label() {
+    $label = parent::label();
+    if ($label === NULL || $label === '') {
+      $id = $this->id();
+      if ($id !== NULL && $id !== '') {
+        return (string) new TranslatableMarkup('Agency @id', ['@id' => $id]);
+      }
+      return (string) new TranslatableMarkup('(no label)');
+    }
+    return $label;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function preSave(EntityStorageInterface $storage): void {
     parent::preSave($storage);
     if (!$this->getOwnerId()) {
