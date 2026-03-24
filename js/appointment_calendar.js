@@ -1,14 +1,11 @@
 (function ($, Drupal, drupalSettings, once) {
   Drupal.behaviors.appointmentBookingCalendar = {
     attach: function (context, settings) {
-      console.log('Attaching calendar behavior...');
       
       const elements = once('appointment-calendar', '#calendar-wrapper', context);
       
       elements.forEach(function (calendarEl) {
-        console.log('Calendar container found:', calendarEl);
         
-        // Remove loading message.
         $(calendarEl).empty();
 
         const appointmentSettings = settings.appointment || {};

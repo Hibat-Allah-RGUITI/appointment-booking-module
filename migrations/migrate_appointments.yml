@@ -1,0 +1,41 @@
+id: migrate_appointments
+label: 'Appointments Migration'
+source:
+  plugin: csv
+  path: 'modules/custom/appointment/migrations/appointments.csv'
+  header_offset: 0
+  ids:
+    - id
+  column_names:
+    - id
+    - title
+    - customer_name
+    - customer_email
+    - customer_phone
+    - date
+    - agency_id
+    - adviser_id
+    - type_id
+    - status
+process:
+  title: title
+  field_customer_name: customer_name
+  field_customer_email: customer_email
+  field_customer_phone: customer_phone
+  field_appointment_date: date
+  field_appointment_agency:
+    plugin: migration_lookup
+    migration: migrate_agencies
+    source: agency_id
+  field_appointment_adviser:
+    plugin: migration_lookup
+    migration: migrate_advisers
+    source: adviser_id
+  field_status: status
+  field_appointment_type: type_id
+destination:
+  plugin: 'entity:appointment'
+migration_dependencies:
+  required:
+    - migrate_agencies
+    - migrate_advisers

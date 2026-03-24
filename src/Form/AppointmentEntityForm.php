@@ -213,16 +213,39 @@ final class AppointmentEntityForm extends ContentEntityForm
    */
   public function save(array $form, FormStateInterface $form_state): int
   {
+    $entity = $this->entity;
+    $operation = $this->getOperation();
+
+    
+    
+    
+    if (in_array($operation, ['personal_info', 'details'])) {
+      $original_entity = \Drupal::entityTypeManager()
+        ->getStorage('appointment')
+        ->loadUnchanged($entity->id());
+
+      if ($original_entity) {
+        if ($operation === 'personal_info') {
+          $entity->set('field_appointment_date', $original_entity->get('field_appointment_date')->value);
+          $entity->set('field_appointment_agency', $original_entity->get('field_appointment_agency')->target_id);
+          $entity->set('field_appointment_adviser', $original_entity->get('field_appointment_adviser')->target_id);
+          $entity->set('field_appointment_type', $original_entity->get('field_appointment_type')->target_id);
+        }
+        elseif ($operation === 'details') {
+          $entity->set('field_customer_name', $original_entity->get('field_customer_name')->value);
+          $entity->set('field_customer_email', $original_entity->get('field_customer_email')->value);
+          $entity->set('field_customer_phone', $original_entity->get('field_customer_phone')->value);
+        }
+      }
+    }
+
     $result = parent::save($form, $form_state);
 
-    $label = $this->entity->label();
-    if ($label === NULL || $label === '') {
-      $label = $this->t('(no label)');
-    }
-    $message_args = ['%label' => $this->entity->toLink($label)->toString()];
+    $label = $entity->label() ?: $this->t('(no label)');
+    $message_args = ['%label' => $entity->toLink($label)->toString()];
     $logger_args = [
       '%label' => $label,
-      'link' => $this->entity->toLink($this->t('View'))->toString(),
+      'link' => $entity->toUrl('canonical')->toString(),
     ];
 
     switch ($result) {
@@ -235,17 +258,18 @@ final class AppointmentEntityForm extends ContentEntityForm
         $this->messenger()->addStatus($this->t('The appointment %label has been updated.', $message_args));
         $this->logger('appointment')->notice('The appointment %label has been updated.', $logger_args);
 
-        // Send modification email.
-        $email = $this->entity->get('field_customer_email')->value;
+        $email = $entity->get('field_customer_email')->value;
         if ($email) {
           $mail_manager = \Drupal::service('plugin.manager.mail');
-          $langcode = 'en';
+          $langcode = $entity->language()->getId();
+          
           $params = [
-            'title' => $this->entity->label(),
-            'name' => $this->entity->get('field_customer_name')->value,
-            'date' => $this->entity->get('field_appointment_date')->value,
-            'agency' => $this->entity->get('field_appointment_agency')->entity ? $this->entity->get('field_appointment_agency')->entity->label() : '',
+            'title' => (string) $entity->label(),
+            'name'  => (string) $entity->get('field_customer_name')->value,
+            'date'  => (string) $entity->get('field_appointment_date')->value,
+            'agency'=> $entity->get('field_appointment_agency')->entity ? $entity->get('field_appointment_agency')->entity->label() : '',
           ];
+          
           $mail_manager->mail('appointment', 'appointment_modification', $email, $langcode, $params, NULL, TRUE);
         }
         break;
@@ -254,11 +278,10 @@ final class AppointmentEntityForm extends ContentEntityForm
         throw new \LogicException('Could not save the entity.');
     }
 
-    $operation = $this->getOperation();
     if (in_array($operation, ['personal_info', 'details'])) {
-      $form_state->setRedirect('appointment.summary', ['appointment' => $this->entity->id()]);
+      $form_state->setRedirect('appointment.summary', ['appointment' => $entity->id()]);
     } else {
-      $form_state->setRedirectUrl($this->entity->toUrl());
+      $form_state->setRedirectUrl($entity->toUrl());
     }
 
     return $result;

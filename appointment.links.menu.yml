@@ -21,3 +21,11 @@ entity.agency.collection:
   description: 'List of agencies.'
   route_name: entity.agency.collection
   parent: system.admin_content
+
+appointment.my_appointments:
+  title: 'My Appointments'
+  description: 'View your appointments'
+  route_name: appointment.my_appointments
+  menu_name: main
+  weight: 0
+  

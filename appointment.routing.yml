@@ -33,7 +33,7 @@ appointment.login:
 appointment.my_appointments:
   path: '/my-appointments'
   defaults:
-    _controller: '\Drupal\appointment\Controller\AppointmentSummaryController::listMy'
+    _controller: '\Drupal\appointment\Controller\AppointmentSummaryController::list'
     _title: 'My Appointments'
   requirements:
     _permission: 'access content'

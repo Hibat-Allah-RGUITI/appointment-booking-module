@@ -109,7 +109,7 @@ class AppointmentSummaryController extends ControllerBase
   /**
    * Lists all appointments for the logged-in user.
    */
-  public function listMy()
+  public function list()
   {
     $current_user = \Drupal::currentUser();
     $verified_email = '';
