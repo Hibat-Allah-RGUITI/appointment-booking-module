@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - appointment
+    - options
+id: agency.field_timezone
+field_name: field_timezone
+entity_type: agency
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: utc_utc|UTC
+      label: UTC
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

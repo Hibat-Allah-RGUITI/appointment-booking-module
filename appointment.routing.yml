@@ -13,3 +13,115 @@ entity.agency.settings:
     _title: 'Agency'
   requirements:
     _permission: 'administer agency'
+
+appointment.book_form:
+  path: '/book-appointment'
+  defaults:
+    _form: '\Drupal\appointment\Form\AppointmentBookingForm'
+    _title: 'Book an appointment'
+  requirements:
+    _permission: 'access content'
+
+appointment.login:
+  path: '/login-appointment'
+  defaults:
+    _form: '\Drupal\appointment\Form\AppointmentLoginForm'
+    _title: 'Login to my appointments'
+  requirements:
+    _permission: 'access content'
+
+appointment.my_appointments:
+  path: '/my-appointments'
+  defaults:
+    _controller: '\Drupal\appointment\Controller\AppointmentSummaryController::list'
+    _title: 'My Appointments'
+  requirements:
+    _permission: 'access content'
+
+appointment.lookup:
+  path: '/appointment/{appointment}/verify'
+  defaults:
+    _form: '\Drupal\appointment\Form\AppointmentLookupForm'
+    _title: 'Verify Identity'
+  requirements:
+    _permission: 'access content'
+    appointment: \d+
+  options:
+    parameters:
+      appointment:
+        type: 'entity:appointment'
+
+appointment.summary:
+  path: '/appointment/{appointment}/summary'
+  defaults:
+    _controller: '\Drupal\appointment\Controller\AppointmentSummaryController::show'
+    _title: 'Appointment Summary'
+  requirements:
+    _permission: 'access content'
+    appointment: \d+
+  options:
+    parameters:
+      appointment:
+        type: 'entity:appointment'
+
+appointment.edit_personal:
+  path: '/appointment/{appointment}/edit-personal'
+  defaults:
+    _entity_form: 'appointment.personal_info'
+    _title: 'Edit Personal Information'
+  requirements:
+    _permission: 'access content'
+    appointment: \d+
+  options:
+    parameters:
+      appointment:
+        type: 'entity:appointment'
+
+appointment.edit_details:
+  path: '/appointment/{appointment}/edit-details'
+  defaults:
+    _entity_form: 'appointment.details'
+    _title: 'Edit Appointment Details'
+  requirements:
+    _permission: 'access content'
+    appointment: \d+
+  options:
+    parameters:
+      appointment:
+        type: 'entity:appointment'
+
+appointment.cancel:
+  path: '/appointment/{appointment}/cancel'
+  defaults:
+    _controller: '\Drupal\appointment\Controller\AppointmentSummaryController::cancel'
+    _title: 'Cancel Appointment'
+  requirements:
+    _permission: 'access content'
+    appointment: \d+
+  options:
+    parameters:
+      appointment:
+        type: 'entity:appointment'
+
+appointment.export_csv:
+  path: '/admin/appointment/export-csv'
+  defaults:
+    _controller: '\Drupal\appointment\Controller\AppointmentExportController::start'
+    _title: 'Export Appointments'
+  requirements:
+    _permission: 'administer appointment'
+
+appointment.export_download:
+  path: '/admin/appointment/export-download/{uri}'
+  defaults:
+    _controller: '\Drupal\appointment\Controller\AppointmentExportController::download'
+    _title: 'Download Export'
+  requirements:
+    _permission: 'administer appointment'
+
+appointment.calendar_events:
+  path: '/appointment/events'
+  defaults:
+    _controller: '\Drupal\appointment\Controller\AppointmentSummaryController::getEvents'
+  requirements:
+    _permission: 'access content'

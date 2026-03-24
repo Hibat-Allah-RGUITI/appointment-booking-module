@@ -1,0 +1,11 @@
+id,name,email,agency_id,type_id
+1,Youssef El Amrani,y.elamrani@exemple.ma,1,1
+2,Sofia Bensouda,s.bensouda@exemple.ma,2,2
+3,Hicham Chouaib,h.chouaib@exemple.ma,3,1
+4,Laila Ziani,l.ziani@exemple.ma,1,2
+5,Imane Lahmar,i.lahmar@exemple.ma,2,1
+6,Mehdi Sadiki,m.sadiki@exemple.ma,4,2
+7,Siham Fadel,s.fadel@exemple.ma,4,1
+8,Anas Iraqi,a.iraqi@exemple.ma,5,2
+9,Zineb Toumi,z.toumi@exemple.ma,6,1
+10,Omar Kassimi,o.kassimi@exemple.ma,7,2

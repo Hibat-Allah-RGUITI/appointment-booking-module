@@ -1,0 +1,31 @@
+id: migrate_advisers
+label: 'Advisers Migration'
+source:
+  plugin: csv
+  path: 'modules/custom/appointment/migrations/advisers.csv'
+  header_offset: 0
+  ids: [id]
+  column_names:
+    - id
+    - name
+    - email
+    - agency_id
+process:
+  name: name 
+  mail: email
+  status:
+    plugin: default_value
+    default_value: 1
+  roles:
+    plugin: default_value
+    default_value: 'adviser'
+  
+  field_appointment_agency: 
+    plugin: migration_lookup
+    migration: migrate_agencies
+    source: agency_id
+  field_appointment_specialization: type_id
+destination:
+  plugin: 'entity:user' 
+  required:
+    - migrate_agencies

@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.agency.field_timezone
+  module:
+    - appointment
+    - options
+id: agency.agency.field_timezone
+field_name: field_timezone
+entity_type: agency
+bundle: agency
+label: Timezone
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

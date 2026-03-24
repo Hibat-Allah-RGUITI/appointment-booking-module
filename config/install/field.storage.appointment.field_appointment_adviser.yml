@@ -1,0 +1,19 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - appointment
+    - user
+id: appointment.field_appointment_adviser
+field_name: field_appointment_adviser
+entity_type: appointment
+type: entity_reference
+settings:
+  target_type: user
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

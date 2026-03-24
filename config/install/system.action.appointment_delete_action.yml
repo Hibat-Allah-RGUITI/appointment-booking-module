@@ -6,5 +6,5 @@ dependencies:
 id: appointment_delete_action
 label: 'Delete appointments'
 type: appointment
-plugin: entity:delete_action:appointment
+plugin: 'entity:delete_action:appointment'
 configuration: {  }

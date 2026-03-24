@@ -1,0 +1,22 @@
+#calendar-wrapper {
+  margin-top: 20px;
+  min-height: 500px;
+}
+
+.appointment-calendar-container {
+  max-width: 900px;
+  margin: 0 auto;
+  background: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.fc-v-event {
+  background-color: #ff0000 !important;
+  border-color: #ff0000 !important;
+}
+
+.fc-highlight {
+  background-color: rgba(0, 123, 255, 0.3) !important;
+}
