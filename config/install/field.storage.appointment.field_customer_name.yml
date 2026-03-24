@@ -3,8 +3,8 @@ status: true
 dependencies:
   module:
     - appointment
-id: appointment.field_customer_phone
-field_name: field_customer_phone
+id: appointment.field_customer_name
+field_name: field_customer_name
 entity_type: appointment
 type: string
 settings:

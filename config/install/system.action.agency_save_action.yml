@@ -6,5 +6,5 @@ dependencies:
 id: agency_save_action
 label: 'Save agencies'
 type: agency
-plugin: entity:save_action:agency
+plugin: 'entity:save_action:agency'
 configuration: {  }

@@ -7,3 +7,11 @@ dependencies:
   - drupal:field
   - drupal:user
   - drupal:options
+  - drupal:appointment
+  - drupal:block
+  - drupal:datetime
+  - drupal:image
+  - drupal:language
+  - drupal:system
+  - drupal:taxonomy
+  - drupal:views
