@@ -2,14 +2,14 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.appointment.field_customer_name
+    - field.storage.agency.field_agency_phone
   module:
     - appointment
-id: appointment.appointment.field_customer_name
-field_name: field_customer_name
-entity_type: appointment
-bundle: appointment
-label: ' Customer name'
+id: agency.agency.field_agency_phone
+field_name: field_agency_phone
+entity_type: agency
+bundle: agency
+label: Phone
 description: ''
 required: false
 translatable: false

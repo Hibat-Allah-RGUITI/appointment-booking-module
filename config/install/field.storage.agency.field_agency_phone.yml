@@ -3,9 +3,9 @@ status: true
 dependencies:
   module:
     - appointment
-id: appointment.field_customer_phone
-field_name: field_customer_phone
-entity_type: appointment
+id: agency.field_agency_phone
+field_name: field_agency_phone
+entity_type: agency
 type: string
 settings:
   max_length: 255

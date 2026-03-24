@@ -1,0 +1,111 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.agency.agency.field_agency_address
+    - field.field.agency.agency.field_agency_email
+    - field.field.agency.agency.field_agency_opening_hours
+    - field.field.agency.agency.field_agency_phone
+    - field.field.agency.agency.field_timezone
+    - field.field.agency.agency.field_title
+  module:
+    - appointment
+    - options
+    - user
+id: agency.agency.default
+targetEntityType: agency
+bundle: agency
+mode: default
+content:
+  created:
+    type: timestamp
+    label: above
+    settings:
+      date_format: medium
+      custom_date_format: ''
+      timezone: ''
+      tooltip:
+        date_format: long
+        custom_date_format: ''
+      time_diff:
+        enabled: false
+        future_format: '@interval hence'
+        past_format: '@interval ago'
+        granularity: 2
+        refresh: 60
+    third_party_settings: {  }
+    weight: 20
+    region: content
+  field_agency_address:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 22
+    region: content
+  field_agency_email:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 24
+    region: content
+  field_agency_opening_hours:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 27
+    region: content
+  field_agency_phone:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 23
+    region: content
+  field_timezone:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 26
+    region: content
+  field_title:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 21
+    region: content
+  label:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: -5
+    region: content
+  status:
+    type: boolean
+    label: above
+    settings:
+      format: enabled-disabled
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  uid:
+    type: author
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 15
+    region: content
+hidden:
+  langcode: true

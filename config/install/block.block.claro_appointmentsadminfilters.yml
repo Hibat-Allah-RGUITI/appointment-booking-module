@@ -1,0 +1,24 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - appointment
+    - system
+  theme:
+    - claro
+id: claro_appointmentsadminfilters
+theme: claro
+region: content
+weight: 0
+provider: null
+plugin: appointment_appointments_admin_filters
+settings:
+  id: appointment_appointments_admin_filters
+  label: 'Appointments admin filters'
+  label_display: visible
+  provider: appointment
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: /admin/structure/appointment

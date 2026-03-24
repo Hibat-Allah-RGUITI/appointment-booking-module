@@ -38,7 +38,6 @@ trait AppointmentValidationTrait
       return TRUE;
     }
 
-    // Drupal stores datetime in UTC. Convert for query.
     $date_utc = clone $date;
     $date_utc->setTimezone(new \DateTimeZone('UTC'));
     $formatted = $date_utc->format('Y-m-d\\TH:i:s');
