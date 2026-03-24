@@ -2,7 +2,7 @@ id: migrate_advisers
 label: 'Advisers Migration'
 source:
   plugin: csv
-  path: 'modules/custom/appointment/migrations/advisers.csv'
+  path: 'modules/custom/appointment-booking-module/migrations/advisers.csv'
   header_offset: 0
   ids: [id]
   column_names:

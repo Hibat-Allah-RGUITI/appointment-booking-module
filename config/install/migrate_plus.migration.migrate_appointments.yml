@@ -2,7 +2,7 @@ id: migrate_appointments
 label: 'Appointments Migration'
 source:
   plugin: csv
-  path: 'modules/custom/appointment/migrations/appointments.csv'
+  path: 'modules/custom/appointment-booking-module/migrations/appointments.csv'
   header_offset: 0
   ids:
     - id
